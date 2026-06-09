@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UMKM Readiness Predictor</title>
+  <meta name="description" content="Prediksi kesiapan dan peluang keberhasilan UMKM berbasis Support Vector Machine." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <nav class="nav container">
+        <div class="brand">
+          <div class="brand-logo">URP</div>
+          <div>
+            <div class="brand-title">UMKM Readiness Predictor</div>
+            <div class="brand-subtitle">Prototype solusi berbasis machine learning</div>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a href="#method" class="nav-link">Metode</a>
+          <a href="#predictor" class="btn btn-primary btn-sm">Mulai Prediksi</a>
+        </div>
+      </nav>
+
+      <section class="hero-content container">
+        <div class="hero-copy">
+          <span class="eyebrow">Data Driven Solution untuk UMKM</span>
+          <h1>Prediksi kesiapan dan peluang keberhasilan UMKM berbasis SVM.</h1>
+          <p class="hero-desc">
+            Masukkan karakteristik usaha, lalu sistem akan menghitung indikator kesiapan,
+            menjalankan model Support Vector Machine, dan menampilkan rekomendasi pendampingan
+            yang lebih tepat sasaran.
+          </p>
+          <div class="hero-actions">
+            <a href="#predictor" class="btn btn-primary">Coba Prediksi</a>
+            <a href="#method" class="btn btn-secondary">Lihat Alur Metode</a>
+          </div>
+
+          <div class="hero-badges">
+            <div class="hero-badge">
+              <span class="hero-badge-label">Model</span>
+              <strong>SVM Linear</strong>
+            </div>
+            <div class="hero-badge">
+              <span class="hero-badge-label">Pendekatan</span>
+              <strong>Feature Engineering</strong>
+            </div>
+            <div class="hero-badge">
+              <span class="hero-badge-label">Output</span>
+              <strong>Prediksi & Rekomendasi</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="mini-top">Model Summary</div>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span>Algoritma</span>
+              <strong>SVM Linear</strong>
+            </div>
+            <div class="summary-item">
+              <span>Threshold</span>
+              <strong id="thresholdLabel">0.85</strong>
+            </div>
+            <div class="summary-item">
+              <span>Preprocessing</span>
+              <strong>StandardScaler</strong>
+            </div>
+            <div class="summary-item">
+              <span>Feature</span>
+              <strong>28 Variabel Final</strong>
+            </div>
+          </div>
+          <div class="hero-note">
+            Model mereplikasi parameter hasil notebook sehingga prediksi dapat berjalan langsung di browser tanpa backend.
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section id="predictor" class="section container predictor-section">
+        <div class="section-head">
+          <span class="eyebrow">Input & Prediksi</span>
+          <h2>Form karakteristik usaha</h2>
+          <p>Isi data sesuai kondisi UMKM. Skala <strong>marketing effort</strong> dan <strong>professional advice</strong> menggunakan rentang 1–7.</p>
+        </div>
+
+        <div class="predictor-grid">
+          <div class="panel form-panel">
+            <form id="predictionForm" class="form-layout">
+              <div class="form-group-card">
+                <div class="group-title">
+                  <h3>Profil Pemilik</h3>
+                  <p>Informasi dasar tentang pemilik usaha.</p>
+                </div>
+                <div class="form-grid">
+                  <label>
+                    <span>Usia pemilik</span>
+                    <input type="number" id="Age" min="15" max="90" value="35" required />
+                  </label>
+
+                  <label>
+                    <span>Pendidikan</span>
+                    <select id="Education" required>
+                      <option value="1">1 - SD</option>
+                      <option value="2">2 - SMP</option>
+                      <option value="3" selected>3 - SMA</option>
+                      <option value="4">4 - Sarjana</option>
+                      <option value="5">5 - Pascasarjana</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Gender pemilik</span>
+                    <select id="Owner_Gender" required>
+                      <option value="0">Perempuan</option>
+                      <option value="1" selected>Laki-laki</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Pengalaman bisnis orang tua</span>
+                    <select id="Parent_Business_Experience" required>
+                      <option value="1">Pernah</option>
+                      <option value="0" selected>Tidak pernah</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Pengalaman industri (tahun)</span>
+                    <input type="number" id="Industry_Experience" min="0" max="60" value="6" required />
+                  </label>
+
+                  <label>
+                    <span>Professional advice <strong id="Professional_Advice_value">5</strong>/7</span>
+                    <input type="range" id="Professional_Advice" min="1" max="7" value="5" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group-card">
+                <div class="group-title">
+                  <h3>Kondisi Usaha</h3>
+                  <p>Variabel utama yang membentuk indikator kesiapan UMKM.</p>
+                </div>
+                <div class="form-grid">
+                  <label>
+                    <span>Modal awal</span>
+                    <select id="Initial_Capital" required>
+                      <option value="1" selected>Memadai</option>
+                      <option value="0">Tidak memadai</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Pencatatan keuangan</span>
+                    <select id="Financial_Record_Keeping" required>
+                      <option value="1" selected>Baik</option>
+                      <option value="0">Buruk</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Penggunaan internet</span>
+                    <select id="Internet_Usage" required>
+                      <option value="1" selected>Ya</option>
+                      <option value="0">Tidak</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Business plan</span>
+                    <select id="Business_Plan" required>
+                      <option value="1" selected>Ada</option>
+                      <option value="0">Tidak ada</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Kemitraan</span>
+                    <select id="Partnership" required>
+                      <option value="1">Ya</option>
+                      <option value="0" selected>Tidak</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Marketing effort <strong id="Marketing_Effort_value">5</strong>/7</span>
+                    <input type="range" id="Marketing_Effort" min="1" max="7" value="5" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Prediksi Sekarang</button>
+                <button type="button" id="sampleStrong" class="btn btn-secondary">Contoh Siap</button>
+                <button type="button" id="sampleRisk" class="btn btn-light">Contoh Perlu Pendampingan</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="panel result-panel">
+            <div class="result-top">
+              <span class="eyebrow">Hasil Prediksi</span>
+              <h3 id="predictionTitle">Belum ada prediksi</h3>
+              <p id="predictionSubtitle">Isi form lalu klik tombol prediksi untuk melihat hasil dan rekomendasi.</p>
+            </div>
+
+            <div class="result-highlight">
+              <div class="gauge-ring" id="probabilityRing" style="--p:0">
+                <span id="probabilityText">0%</span>
+              </div>
+              <div class="highlight-copy">
+                <span class="muted-label">Peluang keberhasilan</span>
+                <h4 id="readinessLabel">-</h4>
+                <span id="priorityLabel" class="badge neutral">Menunggu input</span>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span>Core Readiness</span>
+                <strong id="coreScore">- / 4</strong>
+              </div>
+              <div class="stat-card">
+                <span>Decision Value</span>
+                <strong id="decisionValue">-</strong>
+              </div>
+              <div class="stat-card">
+                <span>Threshold</span>
+                <strong>0.85</strong>
+              </div>
+              <div class="stat-card">
+                <span>Model</span>
+                <strong>SVM Linear</strong>
+              </div>
+            </div>
+
+            <div class="recommendation-box">
+              <div class="box-head">
+                <h4>Rekomendasi Pendampingan</h4>
+                <p>Saran disusun berdasarkan faktor input yang masih lemah.</p>
+              </div>
+              <ul id="recommendationList" class="recommendation-list">
+                <li>Rekomendasi akan muncul setelah prediksi dilakukan.</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="method" class="section container">
+        <div class="section-head center">
+          <span class="eyebrow">Alur Metode</span>
+          <h2>Bagaimana aplikasi bekerja</h2>
+          <p>Aplikasi mereplikasi alur model dari notebook hingga menghasilkan prediksi dan rekomendasi otomatis.</p>
+        </div>
+
+        <div class="method-cards">
+          <div class="method-card"><span>1</span><h4>Input Data</h4><p>Pengguna mengisi profil pemilik dan kondisi usaha.</p></div>
+          <div class="method-card"><span>2</span><h4>Feature Engineering</h4><p>Sistem membentuk Core Readiness Score dan fitur interaksi.</p></div>
+          <div class="method-card"><span>3</span><h4>Scaling</h4><p>Seluruh fitur distandardisasi menggunakan parameter scaler hasil training.</p></div>
+          <div class="method-card"><span>4</span><h4>SVM Linear</h4><p>Model menghitung decision value dan probabilitas keberhasilan.</p></div>
+          <div class="method-card"><span>5</span><h4>Output</h4><p>Hasil akhir berupa prediksi, prioritas, dan rekomendasi pendampingan.</p></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div>
+          <strong>UMKM Readiness Predictor</strong>
+          <p>Static web prototype untuk implementasi model prediksi keberhasilan UMKM.</p>
+        </div>
+        <p>Built for GitHub Pages · Frontend only</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
